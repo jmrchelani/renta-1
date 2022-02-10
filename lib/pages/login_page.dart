@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:renta/pages/forget_password.dart';
-import 'package:renta/pages/regi_page.dart';
+import 'package:renta/pages/register_page.dart';
 import 'package:renta/pages/showroom.dart';
+import 'package:renta/utils/constant.dart';
 
-import '../widgets/available_cars.dart';
+import '../keyboard.dart';
 import '../widgets/btn_widget.dart';
 
 class LoginPage extends StatefulWidget {
@@ -14,6 +15,28 @@ class LoginPage extends StatefulWidget {
 }
 
 class StartState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
+  String? email;
+  String? password;
+  bool? remember = false;
+  final List<String?> errors = [];
+
+  void addError({String? error}) {
+    if (!errors.contains(error)) {
+      setState(() {
+        errors.add(error);
+      });
+    }
+  }
+
+  void removeError({String? error}) {
+    if (errors.contains(error)) {
+      setState(() {
+        errors.remove(error);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return initWidget();
@@ -46,7 +69,6 @@ class StartState extends State<LoginPage> {
                 child: Image.asset(
                   "assets/images/rentalogo.png",
                   height: 50,
-                
                 ),
               ),
               Container(
@@ -76,7 +98,28 @@ class StartState extends State<LoginPage> {
                   color: const Color(0xffEEEEEE)),
             ],
           ),
-          child: const TextField(
+          child: TextFormField(
+            obscureText: true,
+            onSaved: (newValue) => password = newValue,
+            onChanged: (value) {
+              if (value.isNotEmpty) {
+                removeError(error: kPassNullError);
+              } else if (value.length >= 8) {
+                removeError(error: kShortPassError);
+              }
+              // ignore: avoid_returning_null_for_void
+              return null;
+            },
+            validator: (value) {
+              if (value!.isEmpty) {
+                addError(error: kPassNullError);
+                return "";
+              } else if (value.length < 8) {
+                addError(error: kShortPassError);
+                return "";
+              }
+              return null;
+            },
             cursorColor: const Color(0xFF1B6A65),
             // ignore: unnecessary_const
             decoration: const InputDecoration(
@@ -106,7 +149,28 @@ class StartState extends State<LoginPage> {
                   color: Color(0xffEEEEEE)),
             ],
           ),
-          child: const TextField(
+          child: TextFormField(
+            keyboardType: TextInputType.emailAddress,
+            onSaved: (newValue) => email = newValue,
+            onChanged: (value) {
+              if (value.isNotEmpty) {
+                removeError(error: kEmailNullError);
+              } else if (emailValidatorRegExp.hasMatch(value)) {
+                removeError(error: kInvalidEmailError);
+              }
+              // ignore: avoid_returning_null_for_void
+              return null;
+            },
+            validator: (value) {
+              if (value!.isEmpty) {
+                addError(error: kEmailNullError);
+                return "";
+              } else if (!emailValidatorRegExp.hasMatch(value)) {
+                addError(error: kInvalidEmailError);
+                return "";
+              }
+              return null;
+            },
             cursorColor: const Color(0xFF1B6A65),
             // ignore: unnecessary_const
             decoration: const InputDecoration(
@@ -144,20 +208,24 @@ class StartState extends State<LoginPage> {
           onTap: () {
             // Write Click Listener Code Here.
           },
-          child:Expanded(
-                    child: Center(
-                      child: ButtonWidget(
-                        onClick: () {
-                          
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Showroom()));
-                        },
-                        btnText: "LOGIN",
-                      ),
-                    ),
-                  ),
+          child: Expanded(
+            child: Center(
+              child: ButtonWidget(
+                onClick: () {
+                  if (_formKey.currentState!.validate()) {
+                    _formKey.currentState!.save();
+                    // if all are valid then go to success screen
+                    KeyboardUtil.hideKeyboard(context);
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Showroom()));
+                  }
+                  // Navigator.push(context,
+                  //     MaterialPageRoute(builder: (context) => Showroom()));
+                },
+                btnText: "LOGIN",
+              ),
+            ),
+          ),
         ),
         Container(
           margin: const EdgeInsets.only(top: 10),

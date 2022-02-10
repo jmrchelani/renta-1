@@ -182,7 +182,8 @@ class _BookCarState extends State<BookCar> {
                         ),
                         widget.car.images.length > 1
                             ? Container(
-                                margin: const EdgeInsets.symmetric(vertical: 16),
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 16),
                                 height: 30,
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -235,7 +236,8 @@ class _BookCarState extends State<BookCar> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+                        padding:
+                            const EdgeInsets.only(top: 16, left: 16, right: 16),
                         child: Text(
                           "SPECIFICATIONS",
                           style: TextStyle(
@@ -337,15 +339,16 @@ class _BookCarState extends State<BookCar> {
                       children: [
                         TextSpan(
                           text: 'Book this car',
-                          style: const TextStyle(fontSize: 18, color: Colors.black),
+                          style: const TextStyle(
+                              fontSize: 18, color: Colors.black),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const DialogBox(),
-                                ),
-                              );
+                              // Navigator.push(
+                              //   context,
+                              //   // MaterialPageRoute(
+                              //   //   builder: (context) => const DialogBox(),
+                              //   ),
+                              // );
                             },
                         ),
                       ],
