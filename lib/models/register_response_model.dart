@@ -26,13 +26,19 @@ class RegisterResponseModel {
 
 class Data {
   Data({
-    required this.username,
+    required this.fullname,
     required this.email,
+    required this.username,
+    required this.phonenumber,
+    required this.password,
     required this.date,
     required this.id,
   });
   late final String username;
   late final String email;
+  late final String fullname;
+  late final String phonenumber;
+  late final String password;
   late final String date;
   late final String id;
 
@@ -47,6 +53,9 @@ class Data {
     final _data = <String, dynamic>{};
     _data['username'] = username;
     _data['email'] = email;
+    _data['fullname'] = fullname;
+    _data['phonenumber'] = phonenumber;
+    _data['password'] = password;
     _data['date'] = date;
     _data['id'] = id;
     return _data;

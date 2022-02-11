@@ -199,7 +199,7 @@ class _BookCarState extends State<BookCar> {
                               buildPricePerPeriod(
                                 "12",
                                 "4.350",
-                                true,
+                                false,
                               ),
                               const SizedBox(
                                 width: 16,

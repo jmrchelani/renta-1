@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:renta/pages/forget_password.dart';
 import 'package:renta/pages/register_page.dart';
 import 'package:renta/pages/showroom.dart';
 import 'package:renta/utils/constant.dart';
 
 import '../keyboard.dart';
+import '../services/authservice.dart';
 import '../widgets/btn_widget.dart';
 
 class LoginPage extends StatefulWidget {
@@ -16,10 +18,12 @@ class LoginPage extends StatefulWidget {
 
 class StartState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  String? email;
-  String? password;
+  var email;
+  var password;
   bool? remember = false;
   final List<String?> errors = [];
+
+  var token;
 
   void addError({String? error}) {
     if (!errors.contains(error)) {
@@ -99,23 +103,23 @@ class StartState extends State<LoginPage> {
             ],
           ),
           child: TextFormField(
-            obscureText: true,
-            onSaved: (newValue) => password = newValue,
+            keyboardType: TextInputType.emailAddress,
+            onSaved: (newValue) => email = newValue,
             onChanged: (value) {
               if (value.isNotEmpty) {
-                removeError(error: kPassNullError);
-              } else if (value.length >= 8) {
-                removeError(error: kShortPassError);
+                removeError(error: kEmailNullError);
+              } else if (emailValidatorRegExp.hasMatch(value)) {
+                removeError(error: kInvalidEmailError);
               }
               // ignore: avoid_returning_null_for_void
               return null;
             },
             validator: (value) {
               if (value!.isEmpty) {
-                addError(error: kPassNullError);
+                addError(error: kEmailNullError);
                 return "";
-              } else if (value.length < 8) {
-                addError(error: kShortPassError);
+              } else if (!emailValidatorRegExp.hasMatch(value)) {
+                addError(error: kInvalidEmailError);
                 return "";
               }
               return null;
@@ -150,41 +154,35 @@ class StartState extends State<LoginPage> {
             ],
           ),
           child: TextFormField(
-            keyboardType: TextInputType.emailAddress,
-            onSaved: (newValue) => email = newValue,
-            onChanged: (value) {
-              if (value.isNotEmpty) {
-                removeError(error: kEmailNullError);
-              } else if (emailValidatorRegExp.hasMatch(value)) {
-                removeError(error: kInvalidEmailError);
-              }
-              // ignore: avoid_returning_null_for_void
-              return null;
-            },
-            validator: (value) {
-              if (value!.isEmpty) {
-                addError(error: kEmailNullError);
-                return "";
-              } else if (!emailValidatorRegExp.hasMatch(value)) {
-                addError(error: kInvalidEmailError);
-                return "";
-              }
-              return null;
-            },
-            cursorColor: const Color(0xFF1B6A65),
-            // ignore: unnecessary_const
-            decoration: const InputDecoration(
-              focusColor: Color(0xFF1B6A65),
+              obscureText: true,
+              onSaved: (newValue) => password = newValue,
+              onChanged: (val) {
+                 password = val;
+              },
+              validator: (value) {
+                if (value!.isEmpty) {
+                  addError(error: kPassNullError);
+                  return "";
+                } else if (value.length < 8) {
+                  addError(error: kShortPassError);
+                  return "";
+                }
+                return null;
+              },
+              cursorColor: const Color(0xFF1B6A65),
               // ignore: unnecessary_const
-              icon: const Icon(
-                Icons.vpn_key,
-                color: Color(0xFF1B6A65),
+              decoration: const InputDecoration(
+                focusColor: Color(0xFF1B6A65),
+                // ignore: unnecessary_const
+                icon: const Icon(
+                  Icons.vpn_key,
+                  color: Color(0xFF1B6A65),
+                ),
+                hintText: "Enter Password",
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
               ),
-              hintText: "Enter Password",
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-            ),
-          ),
+              ),
         ),
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
@@ -212,15 +210,8 @@ class StartState extends State<LoginPage> {
             child: Center(
               child: ButtonWidget(
                 onClick: () {
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    // if all are valid then go to success screen
-                    KeyboardUtil.hideKeyboard(context);
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Showroom()));
-                  }
-                  // Navigator.push(context,
-                  //     MaterialPageRoute(builder: (context) => Showroom()));
+                  Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => Showroom()));
                 },
                 btnText: "LOGIN",
               ),

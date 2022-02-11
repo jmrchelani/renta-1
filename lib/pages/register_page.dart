@@ -1,9 +1,14 @@
 // ignore_for_file: prefer_const_constructors, unnecessary_new
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart';
 import 'package:renta/pages/login_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:renta/utils/constant.dart';
+
+import '../models/register_request_model.dart';
+import '../widgets/btn_widget.dart';
 
 class RegPage extends StatefulWidget {
   const RegPage({key}) : super(key: key);
@@ -13,17 +18,17 @@ class RegPage extends StatefulWidget {
 }
 
 class InitState extends State<RegPage> {
+  TextEditingController emailcontroller = TextEditingController();
+  TextEditingController passwordcontroller = TextEditingController();
+ // TextEditingController fullnamecontroller = TextEditingController();
+ // TextEditingController usernamecontroller = TextEditingController();
+ // TextEditingController phoneNumbercontroller = TextEditingController();
+
+
   bool isApiCallProcess = false;
   bool hidePassword = true;
   static final GlobalKey<FormState> globalFormKey = GlobalKey<FormState>();
-  String? fullname;
-  String? username;
-  String? email;
-  String? phonenumber;
-  String? password;
   final List<String?> errors = [];
-
-  String? conform_password;
 
   void addError({String? error}) {
     if (!errors.contains(error)) {
@@ -106,7 +111,8 @@ class InitState extends State<RegPage> {
                   color: Color(0xffEEEEEE)),
             ],
           ),
-          child: const TextField(
+          child:  TextFormField(
+           // controller: fullnamecontroller,
             cursorColor: const Color(0xFF1B6A65),
             // ignore: unnecessary_const
             decoration: const InputDecoration(
@@ -137,6 +143,7 @@ class InitState extends State<RegPage> {
               ],
             ),
             child: TextFormField(
+          //    controller: usernamecontroller,
               cursorColor: Color(0xFF1B6A65),
               // ignore: unnecessary_const
               decoration: const InputDecoration(
@@ -166,6 +173,7 @@ class InitState extends State<RegPage> {
             ],
           ),
           child: TextFormField(
+      //      controller: phoneNumbercontroller,
             cursorColor: Color(0xFF1B6A65),
             decoration: InputDecoration(
               focusColor: Color(0xFF1B6A65),
@@ -196,6 +204,7 @@ class InitState extends State<RegPage> {
             ],
           ),
           child: TextFormField(
+            controller: emailcontroller,
             cursorColor: Color(0xFF1B6A65),
             decoration: InputDecoration(
               focusColor: Color(0xFF1B6A65),
@@ -226,26 +235,9 @@ class InitState extends State<RegPage> {
             ],
           ),
           child: TextFormField(
+            controller: passwordcontroller,
             obscureText: true,
-            onSaved: (newValue) => password = newValue,
-            onChanged: (value) {
-              if (value.isNotEmpty) {
-                removeError(error: kPassNullError);
-              } else if (value.length >= 8) {
-                removeError(error: kShortPassError);
-              }
-              password = value;
-            },
-            validator: (value) {
-              if (value!.isEmpty) {
-                addError(error: kPassNullError);
-                return "";
-              } else if (value.length < 8) {
-                addError(error: kShortPassError);
-                return "";
-              }
-              return null;
-            },
+            onChanged: (value) {},
             cursorColor: Color(0xFF1B6A65),
             // ignore: unnecessary_const
             decoration: const InputDecoration(
@@ -278,25 +270,7 @@ class InitState extends State<RegPage> {
           ),
           child: TextFormField(
             obscureText: true,
-            onSaved: (newValue) => conform_password = newValue,
-            onChanged: (value) {
-              if (value.isNotEmpty) {
-                removeError(error: kPassNullError);
-              } else if (value.isNotEmpty && password == conform_password) {
-                removeError(error: kMatchPassError);
-              }
-              conform_password = value;
-            },
-            validator: (value) {
-              if (value!.isEmpty) {
-                addError(error: kPassNullError);
-                return "";
-              } else if ((password != value)) {
-                addError(error: kMatchPassError);
-                return "";
-              }
-              return null;
-            },
+            onChanged: (value) {},
             cursorColor: Color(0xFF1B6A65),
             // ignore: unnecessary_const
             decoration: const InputDecoration(
@@ -314,32 +288,20 @@ class InitState extends State<RegPage> {
         ),
         GestureDetector(
           onTap: () {
+            
             // Write Click Listener Code Here.
-            Navigator.pop(context);
+            //Navigator.pop(context);
           },
-          child: Container(
-            alignment: Alignment.center,
-            margin: const EdgeInsets.only(left: 20, right: 20, top: 70),
-            padding: const EdgeInsets.only(left: 20, right: 20),
-            height: 54,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [(new Color(0xFF1B6A65)), new Color(0xFF1B6A65)],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight),
-              borderRadius: BorderRadius.circular(50),
-              color: Colors.grey[200],
-              // ignore: prefer_const_literals_to_create_immutables
-              boxShadow: [
-                const BoxShadow(
-                    offset: Offset(0, 10),
-                    blurRadius: 50,
-                    color: Color(0xffEEEEEE)),
-              ],
-            ),
-            child: const Text(
-              "REGISTER",
-              style: TextStyle(color: Colors.white),
+          child: Expanded(
+            child: Center(
+              child: ButtonWidget(
+                onClick: () {
+                  RegisterRequestModel();
+                  //Navigator.push(context,
+                  //MaterialPageRoute(builder: (context) => Showroom()));
+                },
+                btnText: "Register",
+              ),
             ),
           ),
         ),
