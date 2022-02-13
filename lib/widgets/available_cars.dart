@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:renta/models/carmodel.dart';
+import 'package:renta/provider/cars_data_provider.dart';
 import 'package:renta/widgets/book_car.dart';
 import 'package:renta/widgets/car_widget.dart';
 import 'package:renta/widgets/constants.dart';
@@ -74,7 +76,12 @@ class _AvailableCarsState extends State<AvailableCars> {
                 height: 16,
               ),
               Text(
-                "Available Cars (" + getCarList().length.toString() + ")",
+                "Available Cars (" +
+                    Provider.of<CarsDataProvider>(context)
+                        .cars
+                        .length
+                        .toString() +
+                    ")",
                 style: const TextStyle(
                   color: Colors.black,
                   fontSize: 36,
@@ -85,42 +92,49 @@ class _AvailableCarsState extends State<AvailableCars> {
                 height: 16,
               ),
               Expanded(
-                  child: FutureBuilder<carmodel>(
-                future: getcarApi(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return ListView.builder(
-                        itemCount: snapshot.data?.data?.length,
-                        itemBuilder: (context, index){
-                         return Column(
-                           mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                child: FutureBuilder<carmodel>(
+                  future: getcarApi(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return ListView.builder(
+                          itemCount: snapshot.data?.data?.length,
+                          itemBuilder: (context, index) {
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
-                                  height:MediaQuery.of(context).size.height *.3,
-                                  width:MediaQuery.of(context).size.width *1,
+                                  height:
+                                      MediaQuery.of(context).size.height * .3,
+                                  width: MediaQuery.of(context).size.width * 1,
                                   child: ListView.builder(
-                                    itemCount: snapshot.data?.data?[index].images.length,
+                                      itemCount: snapshot
+                                          .data?.data?[index].images.length,
                                       itemBuilder: ((context, position) {
-                                    return Container(
-                                       height:MediaQuery.of(context).size.height *.25,
-                                       width:MediaQuery.of(context).size.width *.5,     
-                                       decoration: BoxDecoration(
-                                         image: DecorationImage(image: snapshot.data?.data?[index].images)
-                                       ),
-                                    );
-                                  })),
+                                        return Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              .25,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .5,
+                                          decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                  image: snapshot.data
+                                                      ?.data?[index].images)),
+                                        );
+                                      })),
                                 )
                               ],
                             );
-                          }
-                      );
-                  }
-                   else {
-                            return Text("Loading");
-                        }
-                },
-              ),
+                          });
+                    } else {
+                      return Text("Loading");
+                    }
+                  },
+                ),
               )
             ],
           ),

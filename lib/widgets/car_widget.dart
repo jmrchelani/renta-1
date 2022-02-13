@@ -29,7 +29,7 @@ Widget buildCar(Car car, int index) {
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: Text(
-                car.condition,
+                car.carName,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 12,
@@ -47,8 +47,8 @@ Widget buildCar(Car car, int index) {
           child: Center(
             child: Hero(
               tag: car.model,
-              child: Image.asset(
-                car.images[0],
+              child: Image.network(
+                car.carImg,
                 fit: BoxFit.fitWidth,
               ),
             ),
@@ -65,7 +65,7 @@ Widget buildCar(Car car, int index) {
           height: 8,
         ),
         Text(
-          car.brand,
+          car.model,
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,

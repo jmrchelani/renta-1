@@ -12,7 +12,7 @@ import 'shared_service.dart';
 class APIService {
   static var client = http.Client();
 
-  static Future<bool> login(
+  static Future<dynamic> login(
     LoginRequestModel model,
   ) async {
     Map<String, String> requestHeaders = {
@@ -30,6 +30,10 @@ class APIService {
       body: jsonEncode(model.toJson()),
     );
 
+    print(response.body);
+    print(response.statusCode);
+    print(response.reasonPhrase);
+
     if (response.statusCode == 200) {
       await SharedService.setLoginDetails(
         loginResponseJson(
@@ -39,11 +43,33 @@ class APIService {
 
       return true;
     } else {
-      return false;
+      return response.reasonPhrase;
     }
   }
 
-  static Future<RegisterResponseModel> register(
+  static Future<http.Response> fetchCars() async {
+    Map<String, String> requestHeaders = {
+      'Content-Type': 'application/json',
+    };
+
+    var url = Uri.http(
+      Config.apiURL,
+      Config.carsFetchAPI,
+    );
+
+    var response = await client.get(
+      url,
+      headers: requestHeaders,
+    );
+
+    // print(response.body);
+    // print(response.statusCode);
+    // print(response.reasonPhrase);
+
+    return response;
+  }
+
+  static Future<dynamic> register(
     RegisterRequestModel model,
   ) async {
     Map<String, String> requestHeaders = {
@@ -61,9 +87,17 @@ class APIService {
       body: jsonEncode(model.toJson()),
     );
 
-    return registerResponseJson(
-      response.body,
-    );
+    print(response.body);
+    print(response.statusCode);
+    print(response.reasonPhrase);
+
+    if (response.statusCode == 200) {
+      return registerResponseJson(
+        response.body,
+      );
+    } else {
+      return response.reasonPhrase;
+    }
   }
 
   // static Future<String> getUserProfile() async {

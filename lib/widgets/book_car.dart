@@ -130,7 +130,7 @@ class _BookCarState extends State<BookCar> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Text(
-                            widget.car.model,
+                            widget.car.carName,
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 36,
@@ -144,7 +144,7 @@ class _BookCarState extends State<BookCar> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Text(
-                            widget.car.brand,
+                            widget.car.model,
                             style: const TextStyle(
                               color: Colors.grey,
                               fontSize: 14,
@@ -170,7 +170,7 @@ class _BookCarState extends State<BookCar> {
                                   ),
                                   child: Hero(
                                     tag: widget.car.model,
-                                    child: Image.asset(
+                                    child: Image.network(
                                       path,
                                       fit: BoxFit.scaleDown,
                                     ),
@@ -180,17 +180,17 @@ class _BookCarState extends State<BookCar> {
                             ),
                           ),
                         ),
-                        widget.car.images.length > 1
-                            ? Container(
-                                margin:
-                                    const EdgeInsets.symmetric(vertical: 16),
-                                height: 30,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: buildPageIndicator(),
-                                ),
-                              )
-                            : Container(),
+                        // widget.car.image.length > 1
+                        //     ? Container(
+                        //         margin:
+                        //             const EdgeInsets.symmetric(vertical: 16),
+                        //         height: 30,
+                        //         child: Row(
+                        //           mainAxisAlignment: MainAxisAlignment.center,
+                        //           children: buildPageIndicator(),
+                        //         ),
+                        //       )
+                        //     : Container(),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Row(
@@ -198,7 +198,7 @@ class _BookCarState extends State<BookCar> {
                             children: [
                               buildPricePerPeriod(
                                 "12",
-                                "4.350",
+                                widget.car.packages[0].outOfCity.toString(),
                                 false,
                               ),
                               const SizedBox(
@@ -206,7 +206,7 @@ class _BookCarState extends State<BookCar> {
                               ),
                               buildPricePerPeriod(
                                 "6",
-                                "4.800",
+                                widget.car.packages[0].tenHours.toString(),
                                 false,
                               ),
                               const SizedBox(
@@ -214,7 +214,7 @@ class _BookCarState extends State<BookCar> {
                               ),
                               buildPricePerPeriod(
                                 "1",
-                                "5.100",
+                                widget.car.packages[0].monthly.toString(),
                                 false,
                               ),
                             ],
@@ -258,7 +258,8 @@ class _BookCarState extends State<BookCar> {
                           physics: const BouncingScrollPhysics(),
                           scrollDirection: Axis.horizontal,
                           children: [
-                            buildSpecificationCar("Color", "White"),
+                            buildSpecificationCar(
+                                "Color", widget.car.color.toString()),
                             buildSpecificationCar("Gearbox", "Automatic"),
                             buildSpecificationCar("Seat", "4"),
                             buildSpecificationCar("Motor", "v10 2.0"),
@@ -301,8 +302,8 @@ class _BookCarState extends State<BookCar> {
                 Row(
                   // ignore: prefer_const_literals_to_create_immutables
                   children: [
-                    const Text(
-                      "USD 4,350",
+                    Text(
+                      widget.car.packages[0].outOfCity.toString(),
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,

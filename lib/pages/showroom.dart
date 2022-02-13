@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:renta/components/main_drawer.dart';
 import 'package:renta/components/slider.dart';
 import 'package:renta/components/tabsbar.dart';
+import 'package:renta/pages/login_page.dart';
+import 'package:renta/provider/cars_data_provider.dart';
+import 'package:renta/services/shared_service.dart';
 import 'package:renta/widgets/book_car.dart';
 import 'package:renta/widgets/car_widget.dart';
 import 'package:renta/widgets/constants.dart';
@@ -19,10 +23,10 @@ class _ShowroomState extends State<Showroom>
   List<NavigationItem> navigationItems = getNavigationItemList();
   late NavigationItem selectedItem;
 
-  List<Car> cars = getCarList();
+  List<Car> cars = [];
 
   @override
-  void asyncinitState() {
+  void initState() {
     super.initState();
     setState(() {
       selectedItem = navigationItems[0];
@@ -31,69 +35,132 @@ class _ShowroomState extends State<Showroom>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF1B6A65),
-        elevation: 0,
-        brightness: Brightness.light,
-        title: Text(
-          "Renta",
-          style: GoogleFonts.muli(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        centerTitle: false,
-        // ignore: prefer_const_literals_to_create_immutables
-        actions: [
-          const Padding(
-            padding: EdgeInsets.only(right: 16),
-            child: Icon(
-              Icons.chat,
-              color: Colors.white,
-              size: 28,
-            ),
-          ),
-        ],
-      ),
-      drawer: const Main_Drawer(),
-      body: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: const Padding(
-                padding: EdgeInsets.all(16),
-                child: ComplicatedImageDemo(),
+    return FutureBuilder(
+        future: SharedService.isLoggedIn(),
+        builder: (c, AsyncSnapshot<bool> s) {
+          print(s.data);
+          if (!s.hasData) {
+            return Center(
+              child: CircularProgressIndicator(
+                color: Color(0xFF1B6A65),
               ),
-            ),
-          ),
-          // banner start
-         
-          // banner end
-          Expanded(
-            child: Align(
-              alignment: Alignment.bottomCenter,  
-                child: Column(
-                  children: [
-                    SizedBox( 
-                      height: 300, child: TabsBar()
-                        // ListView(
-                        //   physics: const BouncingScrollPhysics(),
-                        //   scrollDirection: Axis.horizontal,
-                        //   children: buildDeals(),
-                        // ),
+            );
+          }
+          return !s.data!
+              ? Scaffold(
+                  body: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'You are not logged in, please Login',
+                          style: TextStyle(
+                            fontSize: 20,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 16,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pushAndRemoveUntil(
+                                        MaterialPageRoute(
+                                            builder: (_) => LoginPage()),
+                                        (route) => false);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                      shape: StadiumBorder()),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Text('Login'),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),          
-            ),
-          ),
-        ],
-      ),
-    );
+                  ),
+                )
+              : Scaffold(
+                  backgroundColor: Colors.white,
+                  appBar: AppBar(
+                    backgroundColor: const Color(0xFF1B6A65),
+                    elevation: 0,
+                    brightness: Brightness.light,
+                    title: Text(
+                      "Renta",
+                      style: GoogleFonts.muli(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    centerTitle: false,
+                    // ignore: prefer_const_literals_to_create_immutables
+                    actions: [
+                      const Padding(
+                        padding: EdgeInsets.only(right: 16),
+                        child: Icon(
+                          Icons.chat,
+                          color: Colors.white,
+                          size: 28,
+                        ),
+                      ),
+                    ],
+                  ),
+                  drawer: const Main_Drawer(),
+                  body: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: const Padding(
+                            padding: EdgeInsets.all(16),
+                            child: ComplicatedImageDemo(),
+                          ),
+                        ),
+                      ),
+                      // banner start
+
+                      // banner end
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: FutureBuilder(
+                              future: Provider.of<CarsDataProvider>(context)
+                                  .fetchData(),
+                              builder: (context, snapshot) {
+                                print('fetch : ' + snapshot.data.toString());
+                                return snapshot.hasData
+                                    ? Column(
+                                        children: [
+                                          SizedBox(height: 300, child: TabsBar()
+                                              // ListView(
+                                              //   physics: const BouncingScrollPhysics(),
+                                              //   scrollDirection: Axis.horizontal,
+                                              //   children: buildDeals(),
+                                              // ),
+                                              ),
+                                        ],
+                                      )
+                                    : CircularProgressIndicator(
+                                        color: Color(0xFF1B6A65),
+                                      );
+                              }),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+        });
   }
 
   List<Widget> buildDeals() {

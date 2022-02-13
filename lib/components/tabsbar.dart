@@ -1,5 +1,7 @@
 import 'package:buttons_tabbar/buttons_tabbar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:renta/provider/cars_data_provider.dart';
 import 'package:renta/widgets/book_car.dart';
 import 'package:renta/widgets/car_widget.dart';
 import 'package:renta/widgets/constants.dart';
@@ -19,7 +21,7 @@ class _ExampleState extends State<TabsBar>
   List<NavigationItem> navigationItems = getNavigationItemList();
   late NavigationItem selectedItem;
 
-  List<Car> cars = getCarList();
+  List<Car> cars = [];
 
   void asyncinitState() {
     super.initState();
@@ -30,6 +32,7 @@ class _ExampleState extends State<TabsBar>
 
   @override
   Widget build(BuildContext context) {
+    // cars = Provider.of<CarsDataProvider>(context).cars;
     return Scaffold(
       body: SafeArea(
         child: DefaultTabController(
@@ -40,8 +43,8 @@ class _ExampleState extends State<TabsBar>
                 backgroundColor: const Color(0xFF1B6A65),
                 unselectedBackgroundColor: Colors.grey[300],
                 unselectedLabelStyle: const TextStyle(color: Colors.black),
-                labelStyle:
-                    const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                labelStyle: const TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold),
                 tabs: const [
                   Tab(
                     icon: Icon(Icons.directions_car),
@@ -70,7 +73,7 @@ class _ExampleState extends State<TabsBar>
                         child: ListView(
                           physics: const BouncingScrollPhysics(),
                           scrollDirection: Axis.horizontal,
-                          children: buildDeals(),
+                          children: buildDeals('Sedan'),
                         ),
                       ),
                     ),
@@ -80,7 +83,7 @@ class _ExampleState extends State<TabsBar>
                         child: ListView(
                           physics: const BouncingScrollPhysics(),
                           scrollDirection: Axis.horizontal,
-                          children: buildDeals(),
+                          children: buildDeals('Hatchback'),
                         ),
                       ),
                     ),
@@ -90,7 +93,7 @@ class _ExampleState extends State<TabsBar>
                         child: ListView(
                           physics: const BouncingScrollPhysics(),
                           scrollDirection: Axis.horizontal,
-                          children: buildDeals(),
+                          children: buildDeals('SUV'),
                         ),
                       ),
                     ),
@@ -100,7 +103,7 @@ class _ExampleState extends State<TabsBar>
                         child: ListView(
                           physics: const BouncingScrollPhysics(),
                           scrollDirection: Axis.horizontal,
-                          children: buildDeals(),
+                          children: buildDeals('Luxury'),
                         ),
                       ),
                     ),
@@ -114,17 +117,21 @@ class _ExampleState extends State<TabsBar>
     );
   }
 
-  List<Widget> buildDeals() {
+  List<Widget> buildDeals(String str) {
     List<Widget> list = [];
-    for (var i = 0; i < cars.length; i++) {
+    var data = Provider.of<CarsDataProvider>(context).cars;
+    str = str.toLowerCase();
+    if (data[str] == null || data[str]!.isEmpty) return [];
+    for (var i = 0; i < data[str]!.length; i++) {
       list.add(GestureDetector(
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => BookCar(car: cars[i])),
+              MaterialPageRoute(
+                  builder: (context) => BookCar(car: data[str]![i])),
             );
           },
-          child: buildCar(cars[i], i)));
+          child: buildCar(data[str]![i], i)));
     }
     return list;
   }

@@ -12,8 +12,8 @@ class RegisterResponseModel {
   late final Data? data;
 
   RegisterResponseModel.fromJson(Map<String, dynamic> json) {
-    message = json['message'];
-    data = json['data'] != null ? Data.fromJson(json['data']) : null;
+    message = json['status'] ?? '';
+    data = json['data'] != null ? Data.fromJson(json['data']['user']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -33,6 +33,7 @@ class Data {
     required this.password,
     required this.date,
     required this.id,
+    required this.userId,
   });
   late final String username;
   late final String email;
@@ -41,23 +42,31 @@ class Data {
   late final String password;
   late final String date;
   late final String id;
+  late final String userId;
+  late final String role;
 
   Data.fromJson(Map<String, dynamic> json) {
+    fullname = json['fullName'] ?? '';
+    userId = json['userId'] ?? '';
     username = json['username'];
     email = json['email'];
-    date = json['date'];
-    id = json['id'];
+    phonenumber = json['phoneNumber'].toString();
+    // date = json['date'];
+    id = json['_id'];
+    role = 'buyer';
   }
 
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
     _data['username'] = username;
     _data['email'] = email;
-    _data['fullname'] = fullname;
-    _data['phonenumber'] = phonenumber;
+    _data['fullName'] = fullname;
+    _data['phoneNumber'] = phonenumber;
     _data['password'] = password;
     _data['date'] = date;
     _data['id'] = id;
+    _data['userId'] = userId;
+    _data['role'] = 'buyer';
     return _data;
   }
 }

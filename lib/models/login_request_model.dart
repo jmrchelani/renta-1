@@ -1,7 +1,7 @@
 class LoginRequestModel {
   LoginRequestModel({
     this.email,
-    this.password, username,
+    this.password,
   });
   late final String? email;
   late final String? password;
